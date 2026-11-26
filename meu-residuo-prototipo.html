@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MEU Resíduo · Protótipo navegável</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f2a30;--side:#e8f7f4;--screen:#e8f6fb;--card:#ffffff;--ink:#14222b;--muted:#53636e;--line:#b8c7d1;--teal:#0f766e;--teal-ink:#ffffff;--blue:#1d5fb8;--orange:#b45309;--slate:#46566a;--chip:#b8f0e6;--chip-ink:#0b4f49;--warn:#fbe9cf;--warn-ink:#7a3f06;--err:#b42318;--ok-dis:#8ccfc8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--screen:#0e1c23;--card:#16272f;--ink:#e6f1f5;--muted:#9db0bb;--line:#35505d;--teal:#14a095;--chip:#0f4a45;--chip-ink:#b8f0e6;--warn:#4a3314;--warn-ink:#fbd9a5;--err:#ff8a7a;--ok-dis:#2a5a58;--slate:#3b4d60}}
+:root[data-theme="dark"]{--screen:#0e1c23;--card:#16272f;--ink:#e6f1f5;--muted:#9db0bb;--line:#35505d;--teal:#14a095;--chip:#0f4a45;--chip-ink:#b8f0e6;--warn:#4a3314;--warn-ink:#fbd9a5;--err:#ff8a7a;--ok-dis:#2a5a58;--slate:#3b4d60}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center;gap:56px;padding:24px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #f5b301;outline-offset:2px}
+.side{max-width:340px;color:#d9efeb}
+.side h1{font-size:34px;line-height:1.1;margin:0 0 12px;color:#fff}
+.side p{margin:0 0 20px;line-height:1.55;color:#b7d6d1}
+.jumps{display:flex;flex-wrap:wrap;gap:8px}
+.jumps button{background:#0f766e;border:1px solid #2aa396;color:#fff;border-radius:999px;padding:9px 16px;font-weight:500}
+.jumps button[aria-current=true]{background:#fff;color:#0b4f49}
+.phone{width:390px;height:790px;border-radius:44px;border:10px solid #06141a;background:var(--screen);position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.view{flex:1;overflow-y:auto;padding:22px 18px 16px;display:flex;flex-direction:column;gap:12px}
+.top{display:flex;align-items:center;gap:10px;min-height:34px}
+.top h2{margin:0;font-size:19px;font-weight:700}
+.top.center{justify-content:center}
+.icon{background:none;border:0;font-size:22px;padding:4px 8px;border-radius:8px;color:var(--ink)}
+label{font-size:12.5px;color:var(--muted);font-weight:500;display:block;margin-bottom:4px}
+.field,select.field{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);font-size:15px}
+.field.bad{border-color:var(--err);border-width:2px}
+.msg{font-size:12.5px;color:var(--err);margin-top:5px;display:flex;gap:5px}
+.btn{border:0;border-radius:10px;padding:14px;font-weight:600;font-size:15px;width:100%;background:var(--slate);color:#fff}
+.btn.main{background:var(--teal)}
+.btn:disabled{background:var(--ok-dis);color:#e9f3f2;cursor:not-allowed}
+.btn.ev{background:var(--slate)}
+.btn.ev.done{background:var(--teal)}
+.link{background:none;border:0;color:var(--teal);text-decoration:underline;font-size:14px;padding:8px;font-weight:500}
+.chip{display:inline-block;background:var(--chip);color:var(--chip-ink);border-radius:999px;padding:4px 11px;font-size:12px;font-weight:500;align-self:flex-start}
+.chip.warn{background:var(--warn);color:var(--warn-ink)}
+.grow{flex:1}
+.sec{font-size:13px;font-weight:600;margin:6px 0 -4px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{border:0;border-radius:10px;padding:16px 8px;color:#fff;font-weight:600;font-size:15px;line-height:1.25;text-align:center}
+.tile small{display:block;font-weight:500;font-size:12px;opacity:.9}
+.tile.g{background:var(--teal)}.tile.b{background:var(--blue)}.tile.o{background:var(--orange)}
+.tile.full{grid-column:1/-1}
+.nav{display:flex;border-top:1px solid var(--line);background:var(--screen);padding:8px 6px 10px}
+.nav button{flex:1;background:none;border:0;padding:10px 4px;font-size:12.5px;color:var(--muted);font-weight:500}
+.nav button[aria-current=true]{color:var(--teal);font-weight:700}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;background:none;border:0;padding:11px 4px;font-size:14px;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-color:var(--teal)}
+details{background:var(--slate);color:#fff;border-radius:10px;padding:0}
+details summary{padding:13px 14px;font-weight:500;font-size:14.5px;cursor:pointer;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details ol{margin:0;padding:0 16px 14px 34px;font-size:13.5px;line-height:1.55}
+.card{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--line)}
+.sum{background:var(--card);border-radius:12px;padding:14px;text-align:center;line-height:1.8;font-size:15px}
+.big{width:52px;height:52px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:26px;align-self:center}
+.big.ring{background:var(--chip);color:var(--teal);width:110px;height:110px;font-size:42px;border:2px solid var(--teal)}
+.prog{height:7px;border-radius:9px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--teal);transition:width .3s}
+.center{text-align:center}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.bar{height:10px;border-radius:6px;background:var(--teal)}
+.q{width:42px;height:42px;border-radius:50%;border:2px solid var(--teal);background:var(--card);color:var(--teal);font-weight:700;font-size:17px}
+.tip{background:#1e2c3a;color:#fff;font-size:12px;border-radius:8px;padding:7px 10px}
+.toast{position:absolute;left:16px;right:16px;bottom:78px;background:#14222b;color:#fff;border-radius:10px;padding:12px 14px;font-size:13.5px;opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:none}
+.check{display:flex;gap:10px;align-items:center;font-size:14.5px}
+.check input{width:22px;height:22px;accent-color:var(--teal)}
+@media (max-width:860px){.side{display:none}body{padding:0}}
+@media (max-width:520px){.phone{width:100%;height:100dvh;border:0;border-radius:0;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<aside class="side">
+  <h1>MEU Resíduo</h1>
+  <p>Protótipo navegável do MVP mobile first. Toque nas telas ao lado ou use os atalhos para pular direto para uma etapa do fluxo.</p>
+  <div class="jumps" id="jumps"></div>
+</aside>
+<main class="phone" id="phone" aria-label="Protótipo do aplicativo MEU Resíduo">
+  <div class="view" id="view"></div>
+  <nav class="nav" id="nav" aria-label="Navegação principal" hidden></nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main>
+<script>
+var RES=["Papel","Plástico","Vidro","Metal","Orgânico","Eletrônicos"];
+var S={screen:"login",back:"login",tour:0,tourSeen:false,tab:"t",q:"",hq:"",touched:false,tip:false,ok:false,
+  f:{res:"",qty:"",e1:false,e2:false},list:[],last:null};
+var CTX={login:"Login",inicio:"Início",coletas:"Coletas",relatorios:"Relatórios",coleta:"Dados da coleta",revisao:"Revisão",ajuda:"Ajuda",tour:"Tour guiado"};
+var TUT=[["Como registrar uma coleta (1 min)",["Abra Coletas e escolha o resíduo.","Informe o peso em kg.","Anexe as evidências anterior e posterior.","Toque em Finalizar coleta e confirme na revisão."]],
+ ["Como anexar evidências",["Na tela Dados da coleta, toque em Evid. anterior.","Depois da coleta, toque em Evid. posterior.","O aviso de pendência some quando as duas estiverem anexadas."]],
+ ["Como emitir relatórios",["Relatórios completos chegam na Fase 2.","Por enquanto, a aba Relatórios mostra o total coletado por resíduo."]]];
+var FAQ=[["Posso corrigir uma coleta antes de finalizar?","Sim. Na revisão, toque em Voltar e editar."],["Por que Finalizar coleta está desabilitado?","Falta resíduo, peso maior que 0 kg ou uma das evidências."],["O que é a Fase 2?","Rotas, Documentos, Licenças e Relatórios completos."]];
+var TOUR=[["▭","Registre uma coleta em poucos toques","Escolha o resíduo, informe o peso e anexe as evidências. A rastreabilidade é automática."],
+ ["✓","Ajuda sempre à mão","O botão ? e a aba Ajuda abrem orientações filtradas pela tela em que você está."],
+ ["▤","Revise antes de finalizar","Confira o resumo e confirme. Depois é só acompanhar na aba Coletas."]];
+var $=function(i){return document.getElementById(i)};
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function kg(n){return String(n).replace(".",",")}
+function qtyNum(){return parseFloat(String(S.f.qty).replace(",","."))}
+function missing(){var m=[];if(!S.f.res)m.push("resíduo");var q=qtyNum();if(!(q>0))m.push("peso");if(!S.f.e1)m.push("evidência anterior");if(!S.f.e2)m.push("evidência posterior");return m}
+function toast(t){var e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove("on")},2200)}
+function go(s,keep){if(s==="ajuda"&&S.screen!=="ajuda")S.back=S.screen;if(s==="ajuda"){S.ctx=CTX[S.screen==="ajuda"?S.back:S.screen]}
+  S.screen=s;S.tip=false;S.ok=false;render();$("view").scrollTop=0}
+function topbar(t,back){return '<div class="top">'+(back?'<button class="icon" data-a="back" aria-label="Voltar">←</button>':'')+'<h2>'+t+'</h2></div>'}
+var V={
+login:function(){return '<div class="top center"><h2>MEU Resíduo</h2></div><p class="center" style="margin:-8px 0 8px;font-size:12.5px;color:var(--muted)">Gestão de resíduos em um só lugar</p>'+
+ '<div><label for="amb">Ambiente</label><select class="field" id="amb"><option value="">Selecione o ambiente</option><option>Produção</option><option>Homologação</option><option>Treinamento</option></select></div>'+
+ '<div><label for="usr">Usuário</label><input class="field" id="usr" placeholder="seu.usuario" autocomplete="off"></div>'+
+ '<div><label for="pwd">Senha</label><input class="field" id="pwd" type="password" placeholder="••••••••"></div>'+
+ '<div class="grow"></div><button class="btn main" data-a="login">Entrar</button><button class="link" data-a="forgot">Esqueci a senha</button><hr style="border:0;border-top:1px solid var(--line);width:100%;margin:0"><button class="link" data-a="helpfirst">? Ajuda e tour guiado</button>'},
+ajuda:function(){var c=S.ctx||"Início",h=S.hq.toLowerCase(),body="";
+ var inScr=!!S.logged;
+ if(S.tab==="t"){var l=TUT.filter(function(x){return !h||x[0].toLowerCase().indexOf(h)>-1||x[1].join(" ").toLowerCase().indexOf(h)>-1});
+  body='<span class="chip">Ajuda desta tela: '+esc(c)+'</span><div class="sec">Passo a passo</div>'+(l.length?l.map(function(x,i){return '<details'+(i===0&&c==="Dados da coleta"&&!h?' open':'')+'><summary>'+x[0]+'</summary><ol>'+x[1].map(function(s){return '<li>'+s+'</li>'}).join("")+'</ol></details>'}).join(""):'<div class="card">Nenhum tutorial encontrado para “'+esc(S.hq)+'”. Tente outra palavra ou fale com o suporte.</div>')}
+ else if(S.tab==="p"){body=FAQ.map(function(x){return '<details><summary>'+x[0]+'</summary><ol style="list-style:none;padding-left:16px"><li>'+x[1]+'</li></ol></details>'}).join("")}
+ else body='<div class="card"><b>Suporte MEU Resíduo</b><p style="margin:6px 0 0;font-size:14px;line-height:1.5">Atendimento em dias úteis, das 8h às 18h. Responderemos pelo e-mail do seu cadastro.</p></div>';
+ return topbar("Central de ajuda",true)+'<input class="field" id="hq" placeholder="Buscar dúvida ou tutorial..." value="'+esc(S.hq)+'" aria-label="Buscar dúvida ou tutorial">'+
+ '<div class="tabs" role="tablist">'+[["t","Tutoriais"],["p","Perguntas"],["c","Contato"]].map(function(t){return '<button role="tab" data-a="tab" data-v="'+t[0]+'" aria-selected="'+(S.tab===t[0])+'">'+t[1]+'</button>'}).join("")+'</div>'+body+'<div class="grow"></div><button class="btn main" data-a="retour">Refazer tour guiado</button><button class="btn" data-a="support">Falar com o suporte</button>'},
+tour:function(){var t=TOUR[S.tour];return '<div class="center" style="font-size:12px;color:var(--muted)">Passo '+(S.tour+1)+' de 3</div><div class="prog"><i style="width:'+((S.tour+1)/3*100)+'%"></i></div><div class="grow"></div>'+
+ '<div class="big ring" aria-hidden="true">'+t[0]+'</div><h2 class="center" style="margin:10px 0 0;font-size:21px">'+t[1]+'</h2><p class="center" style="margin:0;font-size:14px;color:var(--muted);line-height:1.5">'+t[2]+'</p><div class="grow"></div>'+
+ '<button class="btn main" data-a="next">'+(S.tour===2?"Começar":"Próximo")+'</button><button class="link" data-a="skip">Pular tour</button>'},
+inicio:function(){return '<div class="top center"><h2>Início</h2></div><input class="field" id="hs" placeholder="Buscar resíduo, documento ou rota..." aria-label="Buscar">'+
+ '<div class="sec">Operação</div><div class="tiles"><button class="tile g" data-a="coleta">Coletas</button><button class="tile g" data-a="f2" data-v="Rotas">Rotas<small>Fase 2</small></button></div>'+
+ '<div class="sec">Conformidade</div><div class="tiles"><button class="tile b" data-a="f2" data-v="Documentos">Documentos<small>Fase 2</small></button><button class="tile b" data-a="f2" data-v="Licenças">Licenças<small>Fase 2</small></button></div>'+
+ '<div class="sec">Análise</div><div class="tiles"><button class="tile o full" data-a="rel">Relatórios · Fase 2</button></div>'+
+ (S.list.length?'<div class="card" style="margin-top:6px;font-size:14px"><b>'+S.list.length+'</b> coleta'+(S.list.length>1?'s registradas':' registrada')+' nesta sessão</div>':'')},
+coletas:function(){return '<div class="top center"><h2>Coletas</h2></div><button class="btn main" data-a="coleta">Nova coleta</button>'+
+ (S.list.length?S.list.slice().reverse().map(function(c){return '<div class="card row"><div><b>'+c.res+'</b><div style="font-size:12.5px;color:var(--muted)">'+c.code+' · '+c.time+'</div></div><b>'+kg(c.kg)+' kg</b></div>'}).join(""):'<div class="card center" style="padding:28px 16px"><b>Nenhuma coleta ainda</b><p style="margin:6px 0 0;font-size:14px;color:var(--muted)">Toque em Nova coleta para registrar a primeira.</p></div>')},
+relatorios:function(){var t={},mx=0;S.list.forEach(function(c){t[c.res]=(t[c.res]||0)+c.kg;mx=Math.max(mx,t[c.res])});
+ return '<div class="top center"><h2>Relatórios</h2></div><span class="chip warn">Fase 2: relatórios completos em breve</span><div class="sec">Total coletado por resíduo</div>'+
+ (Object.keys(t).length?Object.keys(t).map(function(k){return '<div class="card"><div class="row" style="font-size:14px"><span>'+k+'</span><b>'+kg(t[k])+' kg</b></div><div class="bar" style="width:'+Math.max(6,t[k]/mx*100)+'%;margin-top:8px"></div></div>'}).join(""):'<div class="card center" style="padding:28px 16px;font-size:14px;color:var(--muted)">Registre uma coleta para ver os totais aqui.</div>')},
+coleta:function(){var q=qtyNum(),bad=(S.touched||S.f.qty!=="")&&!(q>0),m=missing();
+ return topbar("Dados da coleta",true)+'<div><label for="res">Resíduo</label><select class="field" id="res"><option value="">Selecione o resíduo</option>'+RES.map(function(r){return '<option'+(S.f.res===r?' selected':'')+'>'+r+'</option>'}).join("")+'</select></div>'+
+ '<div><label for="qty">Qtd. coletada (kg)</label><input class="field'+(bad?' bad':'')+'" id="qty" inputmode="decimal" placeholder="0" value="'+esc(S.f.qty)+'"'+(bad?' aria-invalid="true" aria-describedby="qe"':'')+'>'+(bad?'<div class="msg" id="qe">ⓘ Informe um peso maior que 0 kg.</div>':'')+'</div>'+
+ '<div class="tiles"><button class="btn ev'+(S.f.e1?' done':'')+'" data-a="ev1">'+(S.f.e1?'✓ ':'')+'Evid. anterior</button><button class="btn ev'+(S.f.e2?' done':'')+'" data-a="ev2">'+(S.f.e2?'✓ ':'')+'Evid. posterior</button></div>'+
+ (m.length?'<span class="chip warn">Falta: '+m.join(", ")+'</span>':'<span class="chip">Tudo pronto para revisar</span>')+
+ '<div class="grow"></div><button class="btn main" data-a="review"'+(m.length?' disabled':'')+'>Finalizar coleta</button>'},
+revisao:function(){var f=S.f;if(S.ok===2)return '<div class="grow"></div><div class="big ring" aria-hidden="true">✓</div><h2 class="center" style="margin:8px 0 0">Coleta registrada</h2><p class="center" style="margin:0;color:var(--muted);font-size:14px">Protocolo '+S.last.code+' · '+S.last.res+' · '+kg(S.last.kg)+' kg</p><div class="grow"></div><button class="btn main" data-a="coleta2">Registrar outra coleta</button><button class="btn" data-a="verlista">Ver coletas</button>';
+ return '<div class="big" aria-hidden="true">✓</div><h2 class="center" style="margin:0;font-size:20px">Revise antes de finalizar</h2>'+
+ '<div class="sum">Resíduo: '+f.res+'<br>Quantidade: '+kg(f.qty.replace(".",","))+' kg<br>Evidências: anterior e posterior anexadas</div>'+
+ '<label class="check"><input type="checkbox" id="conf"'+(S.ok?' checked':'')+'> Confirmo que os dados estão corretos</label><div class="grow"></div>'+
+ '<span class="chip">Rastreabilidade registrada</span><div class="row" style="justify-content:flex-start"><button class="q" data-a="q" aria-label="Ajuda desta tela">?</button>'+(S.tip?'<span class="tip">Toque em ? para ver a ajuda desta tela</span>':'')+'</div>'+
+ '<button class="btn main" data-a="confirm"'+(S.ok?'':' disabled')+'>Confirmar e finalizar</button><button class="btn" data-a="coleta">Voltar e editar</button>'}
+};
+function render(){var s=S.screen;$("view").innerHTML=V[s]();
+ var showNav=S.logged&&["inicio","coletas","relatorios","ajuda"].indexOf(s)>-1;
+ var n=$("nav");n.hidden=!showNav;if(showNav)n.innerHTML=[["inicio","Início"],["coletas","Coletas"],["relatorios","Relatórios"],["ajuda","Ajuda"]].map(function(t){return '<button data-a="nav" data-v="'+t[0]+'"'+(s===t[0]?' aria-current="true"':'')+'>'+t[1]+'</button>'}).join("");
+ var map={login:0,ajuda:1,tour:2,inicio:3,coleta:4,revisao:5};
+ [].forEach.call($("jumps").children,function(b,i){b.setAttribute("aria-current",map[s]===i)})}
+var J=[["Login","login"],["Ajuda","ajuda"],["Tour","tour"],["Início","inicio"],["Coleta","coleta"],["Revisão","revisao"]];
+$("jumps").innerHTML=J.map(function(j){return '<button data-j="'+j[1]+'">'+j[0]+'</button>'}).join("");
+$("jumps").addEventListener("click",function(e){var j=e.target.dataset.j;if(!j)return;
+ if(j!=="login")S.logged=true;
+ if(j==="revisao"&&missing().length){S.f={res:"Papel",qty:"12,5",e1:true,e2:true}}
+ if(j==="ajuda"){S.back="login";S.ctx="Login"}
+ if(j==="tour")S.tour=0;
+ S.logged=j!=="login"&&j!=="ajuda"?true:S.logged;
+ go(j)});
+function confirmSave(){var q=qtyNum(),c={res:S.f.res,kg:q,code:"COL-"+String(S.list.length+1).padStart(4,"0"),time:new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})};
+ S.list.push(c);S.last=c;S.f={res:"",qty:"",e1:false,e2:false};S.touched=false;S.ok=2;render()}
+document.addEventListener("click",function(e){var b=e.target.closest("[data-a]");if(!b)return;var a=b.dataset.a,v=b.dataset.v;
+ switch(a){
+ case"login":S.logged=true;go(S.tourSeen?"inicio":"tour");break;
+ case"forgot":toast("Enviamos um link de redefinição para o e-mail cadastrado.");break;
+ case"helpfirst":S.back="login";S.ctx="Login";S.hq="";go("ajuda");break;
+ case"back":if(S.screen==="ajuda")go(S.back);else if(S.screen==="coleta")go(S.logged?"inicio":"login");else go("coleta");break;
+ case"tab":S.tab=v;render();break;
+ case"retour":S.tour=0;go("tour");break;
+ case"support":S.tab="c";render();toast("Mensagem enviada ao suporte.");break;
+ case"next":if(S.tour<2){S.tour++;render()}else{S.tourSeen=true;S.logged=true;go("inicio")}break;
+ case"skip":S.tourSeen=true;S.logged=true;go("inicio");break;
+ case"coleta":case"coleta2":S.ok=false;go("coleta");break;
+ case"f2":toast(v+" estará disponível na Fase 2.");break;
+ case"rel":S.logged=true;go("relatorios");break;
+ case"nav":S.hq="";go(v);break;
+ case"ev1":S.f.e1=!S.f.e1;render();break;
+ case"ev2":S.f.e2=!S.f.e2;render();break;
+ case"review":S.touched=true;if(!missing().length)go("revisao");break;
+ case"q":S.tip=true;render();setTimeout(function(){S.back="revisao";S.ctx="Revisão";S.tab="t";go("ajuda")},900);break;
+ case"confirm":if(S.ok)confirmSave();break;
+ case"verlista":go("coletas");break;
+ }});
+document.addEventListener("input",function(e){var t=e.target;
+ if(t.id==="qty"){S.f.qty=t.value;var p=t.selectionStart;render();var n=$("qty");n.focus();n.setSelectionRange(p,p)}
+ if(t.id==="hq"){S.hq=t.value;var p2=t.selectionStart;render();var n2=$("hq");n2.focus();n2.setSelectionRange(p2,p2)}});
+document.addEventListener("change",function(e){var t=e.target;
+ if(t.id==="res"){S.f.res=t.value;render()}
+ if(t.id==="conf"){S.ok=t.checked;render()}});
+document.addEventListener("focusout",function(e){if(e.target.id==="qty"&&!S.touched){S.touched=true;if(!(qtyNum()>0))render()}});
+render();
+</script>
+</body>
+</html>
